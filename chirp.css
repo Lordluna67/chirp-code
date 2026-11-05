@@ -457,7 +457,6 @@
 
 
 
-    /* Blacket-inspired profile header and customizable username banner */
     .profile-hero {
       position: relative !important;
       overflow: hidden !important;
@@ -548,7 +547,6 @@
     }
 
 
-    /* Restore the original smooth Elite rainbow flow from before the banner updates. */
     @keyframes rainbow-shift {
       from { background-position: 0% 50%; }
       to   { background-position: 100% 50%; }
@@ -558,8 +556,6 @@
       100% { background-position: 260% 50%; }
     }
     .chirp-rainbow-username {
-      /* Repeating spectrum makes the start and end of each animation cycle match,
-         so the colors continuously travel instead of appearing frozen or jumping. */
       background-image: repeating-linear-gradient(90deg,
         #ff0000 0%, #ff7f00 7.14%, #ffff00 14.28%, #00ff00 21.42%,
         #0000ff 28.56%, #4b0082 35.7%, #9400d3 42.84%, #ff0000 50%) !important;
@@ -598,7 +594,6 @@
     }
     @media (prefers-reduced-motion: reduce) { .chirp-rainbow-username, .profile-banner.chirp-rainbow-banner { animation:none; } }
 
-    /* Final profile readability fixes: let the About card grow with its text. */
     #profile-panel.active .profile-about-card {
       display: flex !important;
       flex-direction: column !important;
@@ -621,14 +616,11 @@
       line-height: 1.75 !important;
       padding: 0 !important;
     }
-    /* Keep the profile username on the same original continuous rainbow flow. */
     .profile-title.chirp-rainbow-username,
     .profile-handle.chirp-rainbow-username,
     .username-link.chirp-rainbow-username,
     .user-name-link.chirp-rainbow-username,
     .chirp-rainbow-username {
-      /* Repeating spectrum makes the start and end of each animation cycle match,
-         so the colors continuously travel instead of appearing frozen or jumping. */
       background-image: repeating-linear-gradient(90deg,
         #ff0000 0%, #ff7f00 7.14%, #ffff00 14.28%, #00ff00 21.42%,
         #0000ff 28.56%, #4b0082 35.7%, #9400d3 42.84%, #ff0000 50%) !important;
@@ -650,7 +642,6 @@
       }
     }
 
-    /* Chirp notification center */
     #chat-header-actions { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:8px; min-width:0; }
     #notifications-btn { position:relative; display:inline-flex; align-items:center; gap:7px; background:#242424; color:#eee; border:1px solid #3a3a3a; border-radius:7px; padding:7px 10px; font:inherit; font-size:13px; cursor:pointer; }
     #notifications-btn:hover, #notifications-btn[aria-expanded="true"] { background:#303030; border-color:#8bd450; }
@@ -677,7 +668,6 @@
     @media (max-width:600px) { #chat-header { gap:8px; } #chat-header-actions { gap:5px; } #notifications-btn { padding:7px; } #notifications-btn .notification-button-label { display:none; } #notification-center { right:8px; top:54px; } }
 
 
-    /* Simplified profile styling: plain username text and comfortable, non-cramped layout. */
     .profile-title-row {
       display: flex !important;
       width: auto !important;
@@ -809,7 +799,6 @@
     }
 
 
-    /* Simple profile stats: retain every value, remove decorative stat cards. */
     #profile-panel.active .profile-stats-grid {
       display: flex !important;
       flex-wrap: wrap !important;
