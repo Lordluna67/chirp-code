@@ -1,4 +1,3 @@
-/* CHIRP_RELEASE_TAB_TITLE_OVERRIDE */
 (function keepChirpTabTitleGeneric() {
   const desiredTitle = "New Tab";
   const setTitle = () => {
