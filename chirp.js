@@ -46,8 +46,6 @@ const firebaseConfig = {
     let banStatusRef = null;
     let banStatusHandler = null;
     const HALLOWEEN_THEME_REGEX = /\b(halloween|pumpkin|ghost|spooky|witch|skeleton|candy|trick|treat|haunted|monster|vampire|bat|costume|cobweb|spider|zombie|boo|cauldron|jack[ -]?o[ -]?lantern)\b/i;
-    // Tracks private-channel memberships granted temporarily to admins through
-    // Moderation → See channel. Existing/normal memberships are never removed.
     const temporaryPrivateChannelAccess = new Set();
     let notificationItems = [];
     let notificationListeners = [];
@@ -62,10 +60,6 @@ const firebaseConfig = {
 
     let SWEAR_FILTER_RULES = [];
     let profanityFilterLoaded = false;
-
-    // Supplemental high-severity hate-speech rules. These are merged with the
-    // existing Firebase config/filter entries; they do not replace the server list.
-    // Keep matching focused on explicit slurs and common evasion spellings.
     const BUILTIN_HATE_FILTER_ENTRIES = [
       {
         id: "builtin-anti-black-slur-variants",
@@ -125,13 +119,10 @@ const firebaseConfig = {
       "Christmas": "christmas.png",
       "Prodigy": "prodigy.png"
     };
-    // Change this on asset updates to bypass both browser and CDN image caches.
     const BADGE_IMAGE_VERSION = "20261104-elite-media-pack-v1";
     function badgeAssetUrl(name) {
       const file = BADGE_IMAGE_FILES[name];
       if (!file) return null;
-      // Use GitHub's raw file URL first. It avoids a stale jsDelivr cache after new images
-      // are added to the repository. The version query also gives the URL a fresh cache key.
       return "https://raw.githubusercontent.com/Lordluna67/chirp-code/main/assets/" + encodeURIComponent(file) + "?v=" + BADGE_IMAGE_VERSION;
     }
 
@@ -304,8 +295,6 @@ const firebaseConfig = {
       }
     }
 
-    // Additional matcher for obfuscated text such as "f u c k", "fuc.k", or "fuc-k".
-    // It allows punctuation/spacing between letters but does not remove or invent letters.
     function compileObfuscatedFilterGlob(pattern) {
       const compact = [...normalizeFilterText(pattern).replace(/[^\p{L}\p{N}*]/gu, "")];
       if (!compact.length) return null;
@@ -325,7 +314,6 @@ const firebaseConfig = {
         return null;
       }
     }
-//profanity normalizer raw object ADAM THIS IS GOOD FINALLYYYY
     function normalizeProfanityFilter(raw) {
       let entries = [];
       if (Array.isArray(raw)) {
@@ -337,15 +325,11 @@ const firebaseConfig = {
         entries = raw.split("|");
       }
 
-      // Only activate the supplement when Firebase supplied a real filter list.
-      // The app intentionally remains fail-closed when config/filter is missing.
       const hasServerFilterEntries = entries.some(entry =>
         entry && typeof entry === "object" && !Array.isArray(entry) &&
         (entry.match || entry.word || entry.term || entry.id)
       );
       if (hasServerFilterEntries) {
-        // Put these first so a weaker duplicate rule in the database cannot
-        // downgrade the severity of a high-risk hate-speech match.
         entries = [...BUILTIN_HATE_FILTER_ENTRIES, ...entries];
       }
 
@@ -410,7 +394,6 @@ const firebaseConfig = {
         ].filter(Boolean)
       };
     }
-//This little function is insaine
     function containsSwear(text) {
       const normalizedText = normalizeFilterText(text);
       if (!normalizedText || !SWEAR_FILTER_RULES.length) return null;
@@ -445,12 +428,9 @@ const firebaseConfig = {
         if (badges && typeof badges === "object" && !Array.isArray(badges)) {
           Object.entries(badges).forEach(([name, definition]) => {
             if (!definition || typeof definition !== "object" || Array.isArray(definition)) return;
-            // Preserve built-in descriptions when Firebase only overrides label/color/icon.
             BADGES[name] = { ...(BADGES[name] || {}), ...definition };
           });
         }
-        // Keep the earning descriptions for the seasonal badges aligned with the
-        // current in-app requirements, even if older descriptions exist in Firebase.
         ["Thanksgiving", "Chill", "Halloween", "Christmas", "Prodigy"].forEach(name => {
           BADGES[name] = { ...(BADGES[name] || DEFAULT_BADGES[name]), description: DEFAULT_BADGES[name].description };
         });
@@ -588,7 +568,6 @@ const firebaseConfig = {
 
     function applyUsernameColor(el, uid, data) {
       if (!el || !uid) return;
-      // Keep reserved role colors intact; Elite no longer overrides a user's chosen color.
       if (el.classList.contains("junior-moderator") || el.classList.contains("admin") || el.classList.contains("mod")) return;
       const userData = data || usersCache[uid] || {};
       const color = userData.usernameColor;
@@ -631,8 +610,6 @@ const firebaseConfig = {
         const saved = snap.val() || {};
         const known = new Set([...Object.keys(BADGES), ...Object.keys(DEFAULT_BADGES), ...Object.keys(saved)]);
         known.forEach(name => {
-          // Beta Tester is intentionally retired from Chirp's badge set. Keep any old
-          // database value untouched, but do not show or re-offer it in the interface.
           if (name === "Beta Tester") return;
           const value = saved[name];
           const hasBadge = value === true || value === "true" || value === 1;
@@ -674,7 +651,6 @@ const firebaseConfig = {
       return names;
     }
 
-    // Render just the badge's symbol for the profile avatar (rather than the full badge label).
     function badgeSymbolImageData(name, skipCustomImage = false) {
       const customImage = skipCustomImage ? null : badgeAssetUrl(name);
       if (customImage) return customImage;
@@ -697,8 +673,6 @@ const firebaseConfig = {
       return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
     }
 
-    // Load a custom badge image with two fallbacks so a missing or cached asset never
-    // leaves a broken-image icon in chat, profiles, the badge picker, or achievements.
     function setBadgeImageSource(img, name, symbolOnly = false) {
       if (!img) return;
       const customUrl = badgeAssetUrl(name);
@@ -1197,7 +1171,6 @@ const firebaseConfig = {
       }
     });
 
-    // Add the Terms of Service button beside Log out without requiring a shell change.
     (function installChirpTermsOfService() {
       const logoutButton = document.getElementById("logout-btn");
       if (!logoutButton || document.getElementById("terms-of-service-btn")) return;
@@ -1262,7 +1235,7 @@ const firebaseConfig = {
         intro.style.cssText = "margin:0 0 18px;color:#d7dbe2;font-size:13px;line-height:1.65;";
 
         const sections = [
-          ["1. Be respectful", "Do not harass, threaten, bully, target, or discriminate against other people. Do not post hateful, exploitative, or otherwise abusive content."],
+          ["1. If you are using chirp at a time when teachers deem not ok, then it is all your fault and not the owners, or the other users at chirp. Thisis ment to be an educational tool."],
           ["2. Use Chirp responsibly", "Do not spam, disrupt the service, exploit bugs, attempt unauthorized access, impersonate others, or try to bypass moderation actions."],
           ["3. Your account", "Keep your login information private and take reasonable steps to protect your account. Do not share your password or use another person's account without permission."],
           ["4. Messages and content", "You are responsible for what you post. Do not post unlawful content, content you do not have permission to share, or someone else's private information. You keep ownership of your own content; you allow Chirp to store and display it as needed to provide the service."],
@@ -1339,8 +1312,6 @@ const firebaseConfig = {
       }
       document.querySelectorAll(".channel").forEach(c => c.classList.toggle("active", c === el));
       if (requested === "profile") {
-        // Keep the current channel as the return destination while the Profile
-        // panel is open. Temporary access is released when the user leaves it.
         if (auth.currentUser) openUserProfile(auth.currentUser.uid, true);
         return;
       }
@@ -1638,7 +1609,6 @@ const firebaseConfig = {
       const moderationEl = channels.querySelector('[data-channel="moderation"]');
       const currentMarket = channels.querySelector('[data-channel="market"]');
       if (halloweenEventEnabled) {
-        // Market is placed immediately after General as the seasonal second channel.
         ensureBuiltinChannel("market", "# market", moderationEl);
       } else if (currentMarket) {
         currentMarket.remove();
@@ -1820,8 +1790,6 @@ const firebaseConfig = {
         const memberSnap = await memberRef.once("value");
         const alreadyMember = memberSnap.val() === true;
         if (!alreadyMember) {
-          // Schedule automatic cleanup first so temporary access is removed if
-          // this browser closes unexpectedly, then grant this admin membership.
           await memberRef.onDisconnect().remove();
           try {
             await memberRef.set(true);
@@ -1862,8 +1830,6 @@ const firebaseConfig = {
       if (!user) return false; // onDisconnect will remove the temporary membership.
       const memberRef = db.ref("privateChannels/" + channelId + "/members/" + user.uid);
       try {
-        // Remove first; if the tab disconnects during cleanup, the scheduled
-        // onDisconnect remove remains harmless. Cancel it after removal succeeds.
         await memberRef.remove();
         await memberRef.onDisconnect().cancel().catch(() => {});
         temporaryPrivateChannelAccess.delete(channelId);
@@ -1895,8 +1861,6 @@ const firebaseConfig = {
         privateChannels = nextChannels;
         renderPrivateChannels();
 
-        // If the owner kicks the current user, or the channel is deleted,
-        // move them out of the now-inaccessible channel immediately.
         if (wasViewingPrivateChannel && !privateChannels[currentChannel]) {
           const lostChannelId = currentChannel;
           if (temporaryPrivateChannelAccess.has(lostChannelId)) {
@@ -1996,7 +1960,6 @@ const firebaseConfig = {
       const currentAtOpen = auth.currentUser;
       if (!currentAtOpen) return;
 
-      // A user may keep only one active report. The pointer is readable only by its owner/admins.
       try {
         const activeSnap = await db.ref("activeReports/" + currentAtOpen.uid).once("value");
         const activeReportId = activeSnap.val();
@@ -2134,7 +2097,6 @@ const firebaseConfig = {
           reportId = reportRef.key;
           activeRef = db.ref("activeReports/" + current.uid);
 
-          // The transaction prevents two tabs from submitting separate active reports at once.
           const lock = await activeRef.transaction(existingId => {
             if (existingId === null || existingId === undefined) return reportId;
             return;
@@ -2169,11 +2131,8 @@ const firebaseConfig = {
           cancel.onclick = () => overlay.remove();
         } catch (err) {
           console.error("Could not submit player report:", err);
-          // If report creation failed after acquiring the lock, remove only the orphan lock.
           if (lockAcquired && activeRef) {
             try {
-              // Deleting is allowed by the rules only when the referenced report was not created.
-              // A non-admin client cannot read adminReports directly, so do not query that path here.
               await activeRef.remove();
             } catch (cleanupErr) {
               console.warn("Could not release orphan active-report lock:", cleanupErr);
@@ -2216,7 +2175,6 @@ const firebaseConfig = {
         Object.entries(patch).forEach(([key, value]) => {
           updates["adminReports/" + report.id + "/" + key] = value;
         });
-        // Mirror status/response in the reporter's private inbox so they can see admin replies.
         const inboxRef = db.ref("reportInbox/" + report.reporterUid + "/" + report.id);
         const inboxSnap = await inboxRef.once("value");
         if (inboxSnap.exists()) {
@@ -2425,7 +2383,6 @@ const firebaseConfig = {
       const updates = {};
       updates["friends/" + current.uid + "/" + senderUid] = { uid: senderUid, name: senderName, username: senderUsername, since: timestamp };
       updates["friends/" + senderUid + "/" + current.uid] = { uid: current.uid, name: recipientName, username: recipientUsername, since: timestamp };
-      // The pending request stays in place until both reciprocal friend records are written.
       await db.ref().update(updates);
       await requestRef.remove();
       if (refreshProfileUid) await openUserProfile(refreshProfileUid, editMode);
@@ -2913,8 +2870,6 @@ const firebaseConfig = {
       const profileActions = document.createElement("div");
       profileActions.style.cssText = "display:flex;align-items:center;flex-wrap:wrap;gap:8px;grid-column:1 / -1;";
       profileActions.appendChild(achBtn);
-      // A clearly labelled fallback makes profile-symbol selection discoverable even if
-      // users do not realize the circle itself is clickable.
       if (isOwn && typeof openSymbolPicker === "function") {
         const changeSymbolBtn = document.createElement("button");
         changeSymbolBtn.type = "button";
@@ -2925,7 +2880,6 @@ const firebaseConfig = {
         profileActions.appendChild(changeSymbolBtn);
       }
 
-      // Profiles let users report a player by username, independently of the profile currently open.
       if (!isOwn) {
         const reportBtn = document.createElement("button");
         reportBtn.type = "button";
@@ -2938,7 +2892,6 @@ const firebaseConfig = {
         if (profileRequest !== profileRequestCounter || !profilePanel.classList.contains("active")) return;
       }
 
-      // Report contents are private; only a verified admin can open the reports viewer.
       if (adminFlag === true && currentUserIsAdmin) {
         const viewReportsBtn = document.createElement("button");
         viewReportsBtn.type = "button";
@@ -3450,8 +3403,6 @@ const firebaseConfig = {
         moderationPanel.appendChild(div);
       });
 
-      // Keep the private-channel list at the bottom of the Moderation panel,
-      // followed by the admin-only seasonal-event control.
       if (privateChannelSection) moderationPanel.appendChild(privateChannelSection);
       if (currentUserIsAdmin) {
         const eventSection = document.createElement("section");
@@ -3740,8 +3691,6 @@ const firebaseConfig = {
       const button = document.querySelector('.channel[data-channel="' + channel + '"]');
       if (button) button.click();
     }
-// Browser notification permissions are intentionally never requested.
-// Chirp's in-app notification center and ping toast still work without them.
 function enablePingNotifications() {}
     function showPingToast(msg, channel) {
       const container = document.getElementById("ping-toast-container");
@@ -3789,8 +3738,6 @@ function enablePingNotifications() {}
     }
 
     function addMessage(msg, isOwn, key) {
-      // Firebase may emit child_added for an optimistic message we already rendered.
-      // Avoid creating a duplicate chat row for the same key.
       if (key && Array.from(messagesDiv.querySelectorAll(".message")).some(el => el.dataset.key === String(key))) return;
       const div = document.createElement("div");
       div.className = "message " + (isOwn ? "own" : "other");
@@ -3961,8 +3908,6 @@ function enablePingNotifications() {}
       }, 100);
     }
 
-    // Save the new message and remove overflow in one Firebase transaction so
-    // the history is capped atomically, including when multiple people send at once.
     function addMessageWithHistoryLimit(channel, payload, messageKey) {
       return new Promise((resolve, reject) => {
         const channelRef = db.ref("messages/" + channel);
@@ -4055,7 +4000,6 @@ function enablePingNotifications() {}
       onlineUsersRef.on("value", onlineUsersHandler);
     }
 
-    // Client-side message rate limit: at least 1 second between message attempts.
     let lastMessageAttemptAt = 0;
     messageForm.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -4091,7 +4035,6 @@ function enablePingNotifications() {}
       if (profanityHit) {
         const offenderUid = auth.currentUser.uid;
         if (currentUserIsAdmin) {
-          // Preserve the existing admin protection: remove the message attempt, but never mute or ban admins.
           alert("Message blocked by the profanity filter. Admin accounts cannot be muted or banned by the automatic filter.");
         } else if (profanityHit.severity >= 4) {
           try {
@@ -4104,7 +4047,6 @@ function enablePingNotifications() {}
               ["users/" + offenderUid + "/lastSeen"]: Date.now()
             });
             input.value = "";
-            // The users/{uid}/banned listener displays the recorded reason and signs the user out.
           } catch (err) {
             console.error("Could not apply automatic profanity ban:", err);
             alert("Message blocked, but the automatic ban failed: " + (err.code || err.message || "unknown error"));
@@ -4143,8 +4085,7 @@ function enablePingNotifications() {}
           text: replyTarget.text
         };
       }
-      // Render immediately for a responsive UI; Firebase persists the message in the background.
-      // Reuse the same push key for the optimistic row and the database transaction.
+  
       const sendChannel = currentChannel;
       const optimisticKey = db.ref("messages/" + sendChannel).push().key;
       addMessage(payload, true, optimisticKey);
@@ -4161,8 +4102,6 @@ function enablePingNotifications() {}
               awardedAt: Date.now()
             };
             let recorded = false;
-            // Coins use ten fixed, one-time slots. This lets Firebase Rules verify
-            // the 10-coin purchase with hasChildren(), without unsupported numChildren().
             for (const slot of HALLOWEEN_COIN_SLOTS) {
               const slotRef = claimsRef.child(slot);
               const existingSlot = await slotRef.once("value");
@@ -4180,11 +4119,9 @@ function enablePingNotifications() {}
           }
         }
       }).catch((err) => {
-        // Remove the optimistic message if Firebase rejects the write.
         const optimisticRow = Array.from(messagesDiv.querySelectorAll(".message"))
           .find(el => el.dataset.key === optimisticKey);
         if (optimisticRow) optimisticRow.remove();
-        // Restore the text only if the user has not started typing another message.
         if (currentChannel === sendChannel && !input.value.trim()) input.value = text;
         console.error("Message save failed:", err);
         alert("Failed to send message. " + (err.code === "PERMISSION_DENIED" ? "Firebase rules blocked the message." : (err.message || "Please try again.")));
