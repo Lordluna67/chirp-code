@@ -97,8 +97,6 @@ const firebaseConfig = {
         id: "builtin-ambiguous-slur-abbreviations",
         severity: 3,
         tags: ["hate", "anti-lgbtq", "context-sensitive"],
-        // Shortened forms can have non-hateful meanings, so block them but use
-        // the existing temporary-mute action rather than the auto-ban threshold.
         match: ["fag", "fags", "f4g", "f4gs"]
       }
     ];
