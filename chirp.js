@@ -97,8 +97,6 @@ const firebaseConfig = {
         id: "builtin-ambiguous-slur-abbreviations",
         severity: 3,
         tags: ["hate", "anti-lgbtq", "context-sensitive"],
-        // Shortened forms can have non-hateful meanings, so block them but use
-        // the existing temporary-mute action rather than the auto-ban threshold.
         match: ["fag", "fags", "f4g", "f4gs"]
       }
     ];
@@ -141,12 +139,12 @@ const firebaseConfig = {
       "Elite": { label: "Elite", color: "#ff6bff", icon: "star" },
       "YouTuber": { label: "YouTuber", color: "#ff0033", icon: "star" },
       "Pet": { label: "Pet", color: "#56cfc8", icon: "star" },
-      "Thanksgiving": { label: "Thanksgiving", color: "#f39a32", icon: "star", description: "Win the Thanksgiving event to receive this regular badge." },
-      "Chill": { label: "Chill", color: "#f6c640", icon: "star", description: "Be friends with everyone on Chirp." },
-      "Halloween": { label: "Halloween", color: "#f58220", icon: "star", description: "While the Halloween event is on, send messages containing Halloween-themed words to earn coins. Buy this badge in Market for 10 coins." },
-      "Christmas": { label: "Christmas", color: "#25a64b", icon: "star", description: "Win the Christmas event to receive this regular badge." },
-      "Prodigy": { label: "Prodigy", color: "#f2b323", icon: "star", description: "Have a GPA of 3.8 or higher. This is a regular badge." },
-      "Asian Badge": { label: "Asian Badge", color: "#c99a4a", icon: "star", description: "A special badge featuring a woven conical hat." }
+      "Thanksgiving": { label: "Thanksgiving", color: "#f39a32", icon: "star", description: "Thanksgiving badge." },
+      "Chill": { label: "Chill", color: "#f6c640", icon: "star", description: "Chill Badge" },
+      "Halloween": { label: "Halloween", color: "#f58220", icon: "star", description: "Halloween Badge" },
+      "Christmas": { label: "Christmas", color: "#25a64b", icon: "star", description: "Christmas badge." },
+      "Prodigy": { label: "Prodigy", color: "#f2b323", icon: "star", description: "Prodigy Badge" },
+      "Asian Badge": { label: "Asian Badge", color: "#c99a4a", icon: "star", description: "ASIAN BADGE" }
     };
 
     const HALLOWEEN_COIN_SLOTS = ['coin01', 'coin02', 'coin03', 'coin04', 'coin05', 'coin06', 'coin07', 'coin08', 'coin09', 'coin10'];
@@ -831,7 +829,6 @@ const firebaseConfig = {
       const display = user.displayName || (user.email || "").split("@")[0] || "Account";
       sidebarAccountName.textContent = display;
       sidebarAccountName.classList.toggle("junior-moderator", currentUserIsJuniorModerator && !currentUserIsAdmin);
-      // Username color is user-selected for all accounts, including Elite.
       sidebarAccountName.classList.remove("elite-rainbow");
       applyUsernameColor(sidebarAccountName, user.uid, usersCache[user.uid]);
       if (userInfo) {
@@ -1829,7 +1826,7 @@ const firebaseConfig = {
     async function releaseTemporaryChannelAccess(channelId) {
       if (!temporaryPrivateChannelAccess.has(channelId)) return true;
       const user = auth.currentUser;
-      if (!user) return false; // onDisconnect will remove the temporary membership.
+      if (!user) return false; 
       const memberRef = db.ref("privateChannels/" + channelId + "/members/" + user.uid);
       try {
         await memberRef.remove();
@@ -1914,7 +1911,7 @@ const firebaseConfig = {
     }
 
     function restorePreviousView() {
-      profileRequestCounter += 1; // Ignore any profile request that is still loading.
+      profileRequestCounter += 1;
       document.querySelectorAll(".channel").forEach(el => {
         el.classList.toggle("active", el.dataset.channel === currentChannel);
       });
@@ -3712,7 +3709,6 @@ function enablePingNotifications() {}
       container.appendChild(toast);
       while (container.children.length > 4) container.firstElementChild.remove();
       window.setTimeout(() => toast.remove(), 10000);
-      // No desktop/browser notifications: use the in-app ping toast only.
     }
 
     function stopPingListeners() {
@@ -3862,8 +3858,6 @@ function enablePingNotifications() {}
       window.setTimeout(() => original.classList.remove("message-jump-highlight"), 1600);
     }
 
-    // Keep General, Leaks, and every private channel on a rolling 20-message history.
-    // Firebase push keys sort chronologically, so the first keys are the oldest messages.
     const MAX_CHANNEL_MESSAGES = 20;
     const historyTrimTimers = Object.create(null);
     const historyTrimRunning = Object.create(null);
@@ -3952,7 +3946,6 @@ function enablePingNotifications() {}
         const el = messagesDiv.querySelector(`[data-key="${snapshot.key}"]`);
         if (el) el.remove();
       });
-      // Also clean up older messages already in Firebase when a channel is opened.
       scheduleChannelHistoryTrim(channel);
     }
 
