@@ -1,0 +1,318 @@
+:root {
+  --chirp-blacket-bg: #202225;
+  --chirp-blacket-panel: #292d32;
+  --chirp-blacket-panel-raised: #343a40;
+  --chirp-blacket-panel-dark: #181a1d;
+  --chirp-blacket-border: #17191c;
+  --chirp-blacket-line: #42474e;
+  --chirp-blacket-text: #f1f2f3;
+  --chirp-blacket-muted: #aeb4bb;
+  --chirp-blacket-accent: #8bd450;
+  --chirp-blacket-accent-dark: #5d9632;
+}
+
+html,
+body {
+  background: var(--chirp-blacket-bg);
+  color: var(--chirp-blacket-text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.hidden,
+#auth-view.hidden,
+#chat-view.hidden,
+#login-view.hidden,
+#signup-view.hidden,
+#messages.hidden,
+#message-form.hidden,
+#moderation-panel.hidden,
+#profile-panel.hidden {
+  display: none !important;
+}
+
+.box,
+#auth-view .box {
+  background: var(--chirp-blacket-panel);
+  border-color: var(--chirp-blacket-line);
+  border-bottom-color: var(--chirp-blacket-border);
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+h1,
+h2,
+h3,
+.profile-title,
+.profile-section-title,
+#chat-header h1,
+#online-users h3 {
+  color: #fff;
+  text-shadow: none;
+}
+
+.hint,
+.profile-handle,
+.profile-stat-label,
+#sidebar-account-caption,
+.message .meta .message-time {
+  color: var(--chirp-blacket-muted);
+}
+
+.tabs {
+  border-bottom-color: var(--chirp-blacket-border);
+}
+
+.tabs button {
+  color: var(--chirp-blacket-muted);
+  border-radius: 3px 3px 0 0;
+}
+
+.tabs button.active {
+  color: #fff;
+  background: var(--chirp-blacket-panel-raised);
+  border-bottom-color: var(--chirp-blacket-accent);
+}
+
+input,
+select,
+textarea,
+#message-input,
+.profile-form input,
+.profile-form textarea {
+  background: #1c1f22;
+  color: #fff;
+  border-color: #484e55;
+  border-radius: 4px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, .2);
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+#message-input:focus,
+.profile-form input:focus,
+.profile-form textarea:focus {
+  border-color: var(--chirp-blacket-accent);
+  outline: none;
+}
+
+button,
+.profile-back,
+.mod-toolbar button,
+.mod-actions button,
+.badge-tools button,
+.notification-header-actions button {
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+button.submit,
+#send-btn,
+.profile-save,
+.btn-badge {
+  background: var(--chirp-blacket-accent);
+  color: #17200f;
+  border: 1px solid var(--chirp-blacket-accent-dark);
+  border-bottom: 3px solid #4b782b;
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+button.submit:hover,
+#send-btn:hover,
+.profile-save:hover,
+.btn-badge:hover {
+  background: #a0e36a;
+}
+
+#chat-view {
+  background: var(--chirp-blacket-bg);
+  color: var(--chirp-blacket-text);
+}
+
+#sidebar {
+  background: var(--chirp-blacket-panel);
+  border-right-color: var(--chirp-blacket-border);
+  box-shadow: none;
+}
+
+.channel {
+  color: #c5cad0;
+  border-radius: 4px;
+}
+
+.channel:hover {
+  background: #363c42;
+  color: #fff;
+}
+
+.channel.active {
+  background: #3b4249;
+  color: #fff;
+  box-shadow: inset 3px 0 var(--chirp-blacket-accent);
+}
+
+#add-channel-btn,
+#logout-btn,
+#notifications-btn,
+.profile-back,
+.mod-toolbar button,
+.mod-actions button,
+.badge-tools button,
+.notification-header-actions button {
+  background: #373d44;
+  color: #f4f5f6;
+  border-color: #535b64;
+  border-bottom-color: var(--chirp-blacket-border);
+}
+
+#add-channel-btn:hover,
+#logout-btn:hover,
+#notifications-btn:hover,
+.profile-back:hover,
+.mod-toolbar button:hover,
+.mod-actions button:hover,
+.badge-tools button:hover,
+.notification-header-actions button:hover {
+  background: #454d55;
+  border-color: #69737e;
+}
+
+#online-users {
+  background: #24282c;
+  border-top-color: var(--chirp-blacket-border);
+}
+
+.user-item {
+  color: #d1d5d9;
+}
+
+#sidebar-account {
+  background: #202428;
+  border-top-color: var(--chirp-blacket-border);
+}
+
+#chat-header,
+#message-form {
+  background: #2b3036;
+  border-color: var(--chirp-blacket-border);
+  box-shadow: none;
+}
+
+#user-info {
+  color: #d1d5d9;
+}
+
+#messages,
+#moderation-panel,
+#profile-panel {
+  background: var(--chirp-blacket-bg);
+}
+
+.message {
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+.message:hover {
+  background: #2a2e33;
+}
+
+.message .meta {
+  color: #f0f2f4;
+}
+
+.message .message-text {
+  color: #e4e6e8;
+}
+
+.reply-quote,
+#reply-preview {
+  background: #30363c;
+  border-left-color: var(--chirp-blacket-accent);
+  border-radius: 3px;
+  color: #cbd0d5;
+}
+
+.reply-btn {
+  background: #30363c;
+  border-color: #4b535c;
+  border-radius: 4px;
+  color: #d4d9de;
+}
+
+.reply-btn:hover {
+  border-color: var(--chirp-blacket-accent);
+  color: var(--chirp-blacket-accent);
+}
+
+.mod-user,
+.profile-hero,
+.profile-card,
+.profile-stat,
+#notification-center {
+  background: var(--chirp-blacket-panel);
+  border-color: var(--chirp-blacket-line);
+  border-radius: 5px;
+  box-shadow: none;
+}
+
+.profile-hero {
+  background-image: none;
+  border-bottom-color: var(--chirp-blacket-border);
+}
+
+.profile-avatar {
+  box-shadow: none;
+}
+
+.profile-title,
+.mod-user .name {
+  color: #fff;
+  text-shadow: none;
+}
+
+.profile-pill {
+  background: #373d44;
+  border-color: #535b64;
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+.profile-stat-value {
+  color: #fff;
+}
+
+.profile-stat-value.accent,
+.profile-status {
+  color: var(--chirp-blacket-accent);
+}
+
+#notification-center-header {
+  background: #343a40;
+  border-bottom-color: var(--chirp-blacket-border);
+}
+
+.notification-item:hover {
+  background: #363c42;
+}
+
+#clear-general-btn,
+.btn-ban {
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+::-webkit-scrollbar-track {
+  background: #1b1e21;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4a525b;
+  border-color: #1b1e21;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #68727d;
+}
