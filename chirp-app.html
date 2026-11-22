@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- CHIRP REMOTE APP SHELL: update this file on GitHub for app-layout changes. -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Chirp — a community chat app." />
+  <meta name="chirp-shell-version" content="1" />
+  <title>Chirp</title>
+  <style id="chirp-bootstrap-style">
+    html,body{margin:0;min-height:100%;background:#000;color:#eee;font-family:Arial,Helvetica,sans-serif}
+    #chirp-boot-screen{position:fixed;inset:0;z-index:999999;background:#050608;color:#f4f6f8;display:flex;align-items:center;justify-content:center;padding:24px;font:14px/1.5 Arial,Helvetica,sans-serif}
+    #chirp-boot-card{width:min(500px,100%);padding:24px;background:#111318;border:1px solid #2d323b;border-radius:14px;box-shadow:0 18px 60px #0009}
+    #chirp-boot-brand{font-weight:800;letter-spacing:.12em;font-size:22px;margin-bottom:8px}
+    #chirp-boot-status{color:#b9c0ca;margin:0 0 10px}
+    #chirp-boot-error{color:#ffabab;white-space:pre-wrap;overflow-wrap:anywhere;margin:12px 0;display:none}
+    #chirp-boot-retry{background:#f1f3f5;color:#111;border:0;border-radius:6px;padding:9px 14px;font-weight:700;cursor:pointer;display:none}
+  </style>
+  <script>
+    window.CHIRP_ASSET_BASE = "https://cdn.jsdelivr.net/gh/Lordluna67/chirp-code@main/assets/";
+  </script>
+</head>
+<body>
+  <div id="chirp-boot-screen" role="status" aria-live="polite">
+    <div id="chirp-boot-card">
+      <div id="chirp-boot-brand">CHIRP</div>
+      <p id="chirp-boot-status">Loading the latest app shell, styles, and code…</p>
+      <div id="chirp-boot-error"></div>
+      <button id="chirp-boot-retry" type="button">Try again</button>
+    </div>
+  </div>
+  <main class="wrap" id="auth-view">
+    <div class="box">
+      <img class="login-logo" data-chirp-logo alt="Chirp bird logo" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" style="display:block;width:210px;height:auto;max-width:75vw;object-fit:contain;margin:0 auto 18px;" />
+      <h1>CHIRP</h1>
+      <p class="hint">Welcome to Chirp! Log in or sign up.</p>
+      <div class="tabs">
+        <button type="button" id="tab-login" class="active">Log in</button>
+        <button type="button" id="tab-signup">Sign up</button>
+      </div>
+      <div id="login-view">
+        <div id="login-error" class="msg bad"></div>
+        <div id="login-success" class="msg good"></div>
+        <form id="login-form">
+          <label>Username <input name="username" type="text" placeholder="username" required /></label>
+          <label>Password <input name="password" type="password" placeholder="password" required /></label>
+          <div class="row">
+            <label><input type="checkbox" name="remember" /> Always Sign Back In</label>
+            <a href="#forgot" id="forgot">Forgot?</a>
+          </div>
+          <button class="submit" type="submit">Log in</button>
+        </form>
+      </div>
+      <div id="signup-view" class="hidden">
+        <div id="signup-error" class="msg bad"></div>
+        <div id="signup-success" class="msg good"></div>
+        <form id="signup-form">
+          <label>Display name <input name="name" type="text" placeholder="Your name" required /></label>
+          <label>Username <input name="username" type="text" placeholder="username" required /></label>
+          <label>Password <input name="password" type="password" placeholder="At least 8 characters" required /></label>
+          <label>Confirm password <input name="confirm" type="password" placeholder="Type it again" required /></label>
+          <button class="submit" type="submit">Create account</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <div id="chat-view" class="hidden">
+    <div id="sidebar">
+      <div style="padding: 0 16px 12px; font-weight: 700;">Channels</div>
+      <div id="channels">
+        <div class="channel" data-channel="profile">Profile</div>
+        <div class="channel active" data-channel="general"># general</div>
+        <div class="channel admin-only hidden" data-channel="moderation"># moderation</div>
+      </div>
+      <button type="button" id="add-channel-btn" style="margin: 8px 12px; padding: 8px; background: #222; color: #eee; border: 1px solid #333; border-radius: 6px; cursor: pointer;">Add channel</button>
+      <div id="online-users">
+        <h3>Online</h3>
+        <div id="user-list"></div>
+      </div>
+      <div id="sidebar-account" aria-label="Your account">
+        <div id="sidebar-account-row">
+          <button type="button" id="sidebar-account-name" class="username-link">Account</button>
+          <span id="sidebar-account-badges" aria-label="Your badges"></span>
+        </div>
+        <div id="sidebar-account-caption">Signed in</div>
+      </div>
+    </div>
+    <div id="main-chat">
+      <div id="chat-header">
+        <h1 id="current-channel"># general</h1>
+        <div id="chat-header-actions">
+          <button id="clear-general-btn" type="button" class="hidden" style="margin-right: 2px; background: #e74c3c; color: #fff; border: 0; border-radius: 4px; padding: 6px 10px; cursor: pointer;">Clear general</button>
+          <button id="notifications-btn" type="button" aria-expanded="false" aria-controls="notification-center" title="Notifications">🔔 <span class="notification-button-label">Notifications</span><span id="notification-count" aria-label="Unread notifications">0</span></button>
+          <span id="user-info"></span>
+          <button id="logout-btn">Log out</button>
+        </div>
+      </div>
+      <section id="notification-center" class="hidden" aria-label="Notification center">
+        <div id="notification-center-header"><strong>Notifications</strong><div class="notification-header-actions"><button id="mark-notifications-read" type="button">Mark all read</button><button id="close-notifications" type="button" aria-label="Close notifications">✕</button></div></div>
+        <div id="notification-list"><div class="notification-empty">You're all caught up.</div></div>
+      </section>
+      <div id="messages"></div>
+      <div id="moderation-panel"></div>
+      <section id="profile-panel" aria-live="polite"></section>
+      <form id="message-form">
+        <div id="reply-preview" class="hidden" aria-live="polite">
+          <span>Replying to <strong id="reply-preview-user"></strong></span>
+          <span id="reply-preview-text"></span>
+          <button id="cancel-reply" type="button" aria-label="Cancel reply">×</button>
+        </div>
+        <div id="message-compose-row">
+          <input id="message-input" type="text" placeholder="Type a message… use @username to ping" maxlength="500" required />
+          <button id="send-btn" type="submit">Send</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="ping-toast-container" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/13.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/13.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/13.0.0/firebase-database-compat.js"></script>
+
+  <script>
+    (async function loadLatestChirpAssets() {
+      const boot = document.getElementById("chirp-boot-screen");
+      const status = document.getElementById("chirp-boot-status");
+      const errorBox = document.getElementById("chirp-boot-error");
+      const retry = document.getElementById("chirp-boot-retry");
+      const repo = "Lordluna67/chirp-code";
+      const timestamp = () => Date.now().toString();
+      window.CHIRP_ASSET_BASE = "https://cdn.jsdelivr.net/gh/" + repo + "@main/assets/";
+
+      function showFailure(message, details) {
+        if (status) status.textContent = message;
+        if (errorBox) {
+          errorBox.style.display = "block";
+          errorBox.textContent = details || "Check your internet connection and the public GitHub repository, then try again.";
+        }
+        if (retry) {
+          retry.style.display = "inline-block";
+          retry.onclick = () => window.location.reload();
+        }
+      }
+
+      async function fetchRemoteText(file, minimumLength) {
+        const urls = [
+          "https://raw.githubusercontent.com/" + repo + "/main/" + file + "?fresh=" + timestamp(),
+          "https://cdn.jsdelivr.net/gh/" + repo + "@main/" + file + "?fresh=" + timestamp()
+        ];
+        const errors = [];
+        for (const url of urls) {
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            let response, content;
+            try {
+              response = await fetch(url, { cache: "no-store", mode: "cors", signal: controller.signal });
+              if (!response.ok) throw new Error("HTTP " + response.status);
+              content = await response.text();
+            } finally {
+              clearTimeout(timeoutId);
+            }
+            if (content.trim().length < minimumLength) throw new Error("The downloaded file is empty or incomplete.");
+            if (/^\s*<!doctype html/i.test(content) && file !== "chirp-app.html") throw new Error("The server returned an HTML error page instead of " + file + ".");
+            return content;
+          } catch (err) {
+            errors.push(url + " — " + (err && err.message ? err.message : String(err)));
+            console.warn("Chirp could not load", file, "from", url, err);
+          }
+        }
+        throw new Error(errors.join("\n"));
+      }
+
+      try {
+        if (!window.firebase || typeof firebase.initializeApp !== "function" || typeof firebase.database !== "function") {
+          throw new Error("Firebase's browser libraries did not load. Check your connection and reload.");
+        }
+        if (status) status.textContent = "Loading latest Chirp styles…";
+        const cssText = await fetchRemoteText("chirp.css", 1000);
+        const style = document.createElement("style");
+        style.id = "chirp-remote-css";
+        style.textContent = cssText;
+        document.head.appendChild(style);
+
+        const logo = document.querySelector("[data-chirp-logo]");
+        if (logo) logo.src = window.CHIRP_ASSET_BASE + "chirp-logo.png?fresh=" + timestamp();
+
+        if (status) status.textContent = "Loading latest Chirp features…";
+        const jsText = await fetchRemoteText("chirp.js", 10000);
+        const script = document.createElement("script");
+        const objectUrl = URL.createObjectURL(new Blob([jsText], { type: "text/javascript" }));
+        script.src = objectUrl;
+        script.onload = () => {
+          URL.revokeObjectURL(objectUrl);
+          document.documentElement.dataset.chirpRemoteCode = "loaded";
+          if (boot) boot.remove();
+          console.info("Chirp loaded from the public GitHub repository.");
+        };
+        script.onerror = () => {
+          URL.revokeObjectURL(objectUrl);
+          showFailure("Chirp downloaded its JavaScript but the browser could not run it.", "Check the JavaScript file in GitHub and the Firefox Web Console for details.");
+        };
+        document.body.appendChild(script);
+      } catch (err) {
+        console.error("Chirp startup failed:", err);
+        showFailure("Chirp could not finish starting.", (err && err.message ? err.message : String(err)) + "\n\nCheck the internet connection and GitHub repository, then click Try again.");
+      }
+    })();
+  </script>
+</body>
+</html>
