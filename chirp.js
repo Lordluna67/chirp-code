@@ -1641,7 +1641,7 @@ const firebaseConfig = {
         el.className = "channel private-channel";
         el.dataset.channel = id;
         el.textContent = "# " + (channel.name || "private");
-        if (temporaryPrivateChannelAccess.has(id)) el.title = "Temporary admin access — leaving this channel removes your temporary membership";
+        if (temporaryPrivateChannelAccess.has(id)) el.title = "Temporary Channel Access";
         if (id === currentChannel) el.classList.add("active");
         list.appendChild(el);
       });
