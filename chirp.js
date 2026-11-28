@@ -2146,10 +2146,7 @@ const firebaseConfig = {
 
     function getThanksgivingTargetRotation(prize) {
       const range = getThanksgivingSegmentRange(prize);
-      // Pick a random angle inside the segment (pointer space)
       const pointerAngle = range.start + Math.random() * (range.end - range.start);
-      // Convert to wheel rotation so the pointer lands on it
-      // pointerAngle = (360 - (rotation % 360)) % 360
       let rotation = (360 - pointerAngle) % 360;
       return rotation;
     }
@@ -2194,7 +2191,6 @@ const firebaseConfig = {
         if (progress < 1) {
           button._thanksgivingWheelFrame = requestAnimationFrame(draw);
         } else {
-          // Spin finished — award the prize
           button.dataset.wheelMode = "done";
           finishThanksgivingWheelSpin(button, wheelDisc, resultNote, prize);
         }
